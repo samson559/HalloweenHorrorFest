@@ -6,10 +6,12 @@ public class ProjectileBehavior : MonoBehaviour
     public Vector2 InitialVelocity = new Vector2(1, 1);
     public float ExplodeTime = 1f;
     public GameObject Explosion;
+    public LayerMask mask;
 
     private float ExplodeTimer_;
     private bool hasCollided = false;
-    [SerializeField]private float explosionRad;
+    [SerializeField]
+    private float explosionRad;
 
     Rigidbody2D body;
     // Use this for initialization
@@ -27,6 +29,7 @@ public class ProjectileBehavior : MonoBehaviour
         if (ExplodeTimer_ <= 0)
         {
             Destroy(this.gameObject);
+            explod();
         }
     }
 
@@ -44,16 +47,28 @@ public class ProjectileBehavior : MonoBehaviour
     private void explod()
     {
         GameObject.Destroy(GameObject.Instantiate(Explosion, transform.position, Quaternion.identity) as GameObject, .5f);
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, explosionRad);
-        if(hit.gameObject.CompareTag("Player"))
-        {
-            Vector2 dir = new Vector2(hit.gameObject.transform.position.x - transform.position.x, hit.gameObject.transform.position.y - transform.position.y);
-           hit.gameObject.SendMessage("takeDamage",dir.normalized);
-        }
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, explosionRad,mask);
+        if (hit == null)
+        { }
         else
         {
+            if (hit.gameObject.CompareTag("Player"))
+            {
+                
+                Vector2 dir = new Vector2(hit.gameObject.transform.position.x - transform.position.x, hit.gameObject.transform.position.y - transform.position.y);
+                dir.Normalize();
+                hit.gameObject.SendMessage("takeDamage", dir, SendMessageOptions.DontRequireReceiver);
+            }
+            else
+            {
 
+            }
         }
+    }
+    public void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, explosionRad);
+
     }
 
 }

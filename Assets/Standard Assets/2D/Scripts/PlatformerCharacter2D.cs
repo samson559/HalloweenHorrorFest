@@ -11,6 +11,7 @@ namespace UnityStandardAssets._2D
         [SerializeField] private bool m_AirControl = false;                 // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
         public float ShotSpeed = 100;
+        public float Knockback = 500;
 
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
         const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
@@ -23,6 +24,11 @@ namespace UnityStandardAssets._2D
         [SerializeField] int ammo;
         [SerializeField] private GameObject projectile;
 
+        private float ExplosionForceTimer_ = 0;
+        public float ExplosionForceTime = 2f;
+
+        private Vector2 expDir = Vector2.zero;
+
         private void Awake()
         {
             // Setting up references.
@@ -32,10 +38,19 @@ namespace UnityStandardAssets._2D
             m_Rigidbody2D = GetComponent<Rigidbody2D>();
         }
 
-
+        public void Update() {
+            if (ExplosionForceTimer_ >= 0)
+            {
+                ExplosionForceTimer_ -= Time.deltaTime;
+            }
+            else { ExplosionForceTimer_ = 0;
+                expDir = Vector2.zero;
+            }
+            //m_Grounded = false;
+        }
         private void FixedUpdate()
         {
-            m_Grounded = false;
+
 
             // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
             // This can be done using layers instead but Sample Assets will not overwrite your project settings.
@@ -77,7 +92,7 @@ namespace UnityStandardAssets._2D
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
                 // Move the character
-                m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, m_Rigidbody2D.velocity.y);
+                m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed + ((ExplosionForceTimer_>=0)? expDir.x * ExplosionForceTimer_/ExplosionForceTime* Knockback:0), m_Rigidbody2D.velocity.y);
 
                 // If the input is moving the player right and the player is facing left...
                 if (move > 0 && !m_FacingRight)
@@ -106,12 +121,20 @@ namespace UnityStandardAssets._2D
             
             Vector3 projSpawn = transform.FindChild("ProjSpawn").transform.position;
             GameObject shot = Instantiate(projectile, projSpawn, Quaternion.identity)as GameObject;
-            shot.GetComponent<Rigidbody2D>().AddForce(transform.localScale*ShotSpeed);
+            shot.GetComponent<Rigidbody2D>().AddForce(Vector2.right*transform.localScale.x*ShotSpeed);
 
         }
         public void takeDamage(Vector2 dir)
         {
-            m_Rigidbody2D.AddForce(dir);
+            /*m_Rigidbody2D.MovePosition(transform.position + Vector3.up * .5f);
+            Debug.Log(dir);
+            m_Rigidbody2D.AddForce(dir*Knockback);
+            */
+
+            Debug.Log(dir);
+            expDir = dir;
+            m_Rigidbody2D.velocity = new Vector2(0,dir.y * Knockback);
+            ExplosionForceTimer_ = ExplosionForceTime;
         }
         private void Flip()
         {
