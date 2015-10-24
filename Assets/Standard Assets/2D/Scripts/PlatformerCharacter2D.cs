@@ -28,6 +28,7 @@ namespace UnityStandardAssets._2D
         public float ExplosionForceTime = 2f;
 
         private Vector2 expDir = Vector2.zero;
+        private bool tookHit;
 
         private void Awake()
         {
@@ -92,7 +93,14 @@ namespace UnityStandardAssets._2D
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
                 // Move the character
-                m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed + ((ExplosionForceTimer_>=0)? expDir.x * ExplosionForceTimer_/ExplosionForceTime* Knockback:0), m_Rigidbody2D.velocity.y);
+                //m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed + ((ExplosionForceTimer_>=0)? expDir.x * ExplosionForceTimer_/ExplosionForceTime* Knockback:0), m_Rigidbody2D.velocity.y);
+                
+                m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, m_Rigidbody2D.velocity.y);
+               if(ExplosionForceTimer_>=0)
+                {
+                    m_Rigidbody2D.AddForce(new Vector2(expDir.x, expDir.y) * Knockback);
+                    tookHit = false;
+                } 
 
                 // If the input is moving the player right and the player is facing left...
                 if (move > 0 && !m_FacingRight)
@@ -133,7 +141,8 @@ namespace UnityStandardAssets._2D
 
             Debug.Log(dir);
             expDir = dir;
-            m_Rigidbody2D.velocity = new Vector2(0,dir.y * Knockback);
+            m_Rigidbody2D.velocity += new Vector2(0,dir.y * Knockback);
+            tookHit = true;
             ExplosionForceTimer_ = ExplosionForceTime;
         }
         private void Flip()
