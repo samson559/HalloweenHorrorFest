@@ -19,6 +19,8 @@ namespace UnityStandardAssets._2D
         private Animator m_Anim;            // Reference to the player's animator component.
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+        [SerializeField] int ammo;
+        [SerializeField] private GameObject projectile;
 
         private void Awake()
         {
@@ -98,7 +100,14 @@ namespace UnityStandardAssets._2D
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
             }
         }
+        public void Attack()
+        {
+            
+            Vector3 projSpawn = transform.FindChild("ProjSpawn").transform.position;
+            GameObject shot = Instantiate(projectile, projSpawn, Quaternion.identity)as GameObject;
+            shot.GetComponent<Rigidbody2D>().AddForce(transform.localScale*500);
 
+        }
 
         private void Flip()
         {
