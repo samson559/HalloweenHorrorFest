@@ -32,8 +32,13 @@ namespace UnityStandardAssets._2D
             // Read the inputs.
             bool crouch = Input.GetKey(KeyCode.LeftControl);
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
+            bool fire = CrossPlatformInputManager.GetAxis("Fire1")>0;
             // Pass all parameters to the character control script.
             m_Character.Move(h, crouch, m_Jump);
+            if (fire) {
+                m_Character.Attack();
+            }
+            
             m_Jump = false;
         }
     }
