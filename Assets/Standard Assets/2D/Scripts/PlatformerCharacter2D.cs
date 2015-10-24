@@ -10,6 +10,7 @@ namespace UnityStandardAssets._2D
         [Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;  // Amount of maxSpeed applied to crouching movement. 1 = 100%
         [SerializeField] private bool m_AirControl = false;                 // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
+        public float ShotSpeed = 100;
 
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
         const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
@@ -105,7 +106,7 @@ namespace UnityStandardAssets._2D
             
             Vector3 projSpawn = transform.FindChild("ProjSpawn").transform.position;
             GameObject shot = Instantiate(projectile, projSpawn, Quaternion.identity)as GameObject;
-            shot.GetComponent<Rigidbody2D>().AddForce(transform.localScale*500);
+            shot.GetComponent<Rigidbody2D>().AddForce(transform.localScale*ShotSpeed);
 
         }
 
