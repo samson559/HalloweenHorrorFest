@@ -48,7 +48,7 @@ public class ProjectileBehavior : MonoBehaviour
         if(hit.gameObject.CompareTag("Player"))
         {
             Vector2 dir = new Vector2(hit.gameObject.transform.position.x - transform.position.x, hit.gameObject.transform.position.y - transform.position.y);
-            hit.gameObject.SendMessage("takeDamage",dir.normalized);
+           hit.gameObject.SendMessage("takeDamage",dir.normalized);
         }
         else
         {
