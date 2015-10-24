@@ -12,7 +12,6 @@ public class ProjectileBehavior: MonoBehaviour {
     // Use this for initialization
 	void Start () {
         body = gameObject.GetComponent<Rigidbody2D>();
-        body.AddForce(InitialVelocity);
         ExplodeTimer_ = ExplodeTime;
 	}
 	
