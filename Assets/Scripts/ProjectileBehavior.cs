@@ -9,6 +9,7 @@ public class ProjectileBehavior : MonoBehaviour
 
     private float ExplodeTimer_;
     private bool hasCollided = false;
+    [SerializeField]private float explosionRad;
 
     Rigidbody2D body;
     // Use this for initialization
@@ -26,7 +27,6 @@ public class ProjectileBehavior : MonoBehaviour
         if (ExplodeTimer_ <= 0)
         {
             Destroy(this.gameObject);
-            GameObject.Destroy(GameObject.Instantiate(Explosion, transform.position, Quaternion.identity) as GameObject, .5f);
         }
     }
 
@@ -39,6 +39,20 @@ public class ProjectileBehavior : MonoBehaviour
                 hasCollided = true;
                 ExplodeTimer_ = .25f;
             }
+        }
+    }
+    private void explod()
+    {
+        GameObject.Destroy(GameObject.Instantiate(Explosion, transform.position, Quaternion.identity) as GameObject, .5f);
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, explosionRad);
+        if(hit.gameObject.CompareTag("Player"))
+        {
+            Vector2 dir = new Vector2(hit.gameObject.transform.position.x - transform.position.x, hit.gameObject.transform.position.y - transform.position.y);
+            hit.gameObject.SendMessage("takeDamage",dir.normalized);
+        }
+        else
+        {
+
         }
     }
 

@@ -109,7 +109,10 @@ namespace UnityStandardAssets._2D
             shot.GetComponent<Rigidbody2D>().AddForce(transform.localScale*ShotSpeed);
 
         }
-
+        public void takeDamage(Vector2 dir)
+        {
+            m_Rigidbody2D.AddForce(dir);
+        }
         private void Flip()
         {
             // Switch the way the player is labelled as facing.
@@ -119,6 +122,10 @@ namespace UnityStandardAssets._2D
             Vector3 theScale = transform.localScale;
             theScale.x *= -1;
             transform.localScale = theScale;
+        }
+        void OnCollisionEnter2D(Collision2D col)
+        {
+
         }
     }
 }
